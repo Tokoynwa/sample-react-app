@@ -1,9 +1,9 @@
 pipeline {
   agent any
   stages {
-    stage('') {
+    stage('error') {
       steps {
-        git 'https://github.com/Tokoynwa/sample-react-app'
+        git(url: 'https://github.com/Tokoynwa/sample-react-app', branch: 'dev')
       }
     }
 
