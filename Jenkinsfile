@@ -18,7 +18,7 @@ pipeline {
 
     stage('Test') {
       steps {
-        // Run your tests here (if any)
+        // Run yousdsr tests here (if any)
         sh 'npm test'
       }
     }
