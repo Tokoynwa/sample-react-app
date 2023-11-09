@@ -30,12 +30,9 @@ pipeline {
       }
     }
 
-    stage('Deploy') {
+   stage('Serve') {
       steps {
-        // Replace the below example with your actual deployment script or commands
-        sh 'echo Deploying application'
-        // sh './deploy-script.sh'
-        // sh 'scp -r build/* user@yourserver:/path/to/your/app'
+        sh 'nohup npx serve -s build -l 3000 &'
       }
     }
   }
@@ -45,10 +42,10 @@ pipeline {
       cleanWs()
     }
     success {
-      echo 'Build and deployment succeeded!'
+      echo 'Build, deployment, and server startup succeeded!'
     }
     failure {
-      echo 'Build or deployment failed.'
+      echo 'Build, deployment, or server startup failed.'
     }
   }
 }
