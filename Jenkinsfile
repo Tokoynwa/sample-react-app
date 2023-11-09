@@ -36,8 +36,8 @@ pipeline {
         // For example, to copy to a remote server using scp:
         // sh 'scp -r build/* username@yourserver:/path/to/deployment/directory'
         // Make sure to replace 'username', 'yourserver', and '/path/to/deployment/directory' with your actual data
-        sh 'pm2 start `which serve` --name "react-app" -- -s build -l 3000'
-        //  echo 'Add your deployment steps here'
+        // Replace '/usr/local/bin/pm2' with the full path to the PM2 executable on your system
+    sh '/usr/local/bin/pm2 start /usr/local/bin/serve --name "react-app" -- -s build -l 3000'
       }
     }
   }
