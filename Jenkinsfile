@@ -1,51 +1,65 @@
 pipeline {
   agent any
 
+  environment {
+    CI = 'true'
+  }
+
   stages {
     stage('Checkout') {
       steps {
-        // Checkout the code from the 'main' branch of the GitHub repository
         git(url: 'https://github.com/Tokoynwa/sample-react-app.git', branch: 'main')
       }
     }
 
     stage('Install Dependencies') {
       steps {
-        // Install the project dependencies
-        sh 'npm install'
+        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+          sh 'npm install'
+        }
       }
     }
 
     stage('Test') {
       steps {
-        // Run yousdsr tests here (if any)
-        sh 'npm test'
+        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+          sh 'npm test'
+        }
       }
     }
 
     stage('Build') {
       steps {
-        // Build your project
-        sh 'npm run build'
+        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+          sh 'npm run build'
+        }
       }
     }
 
     stage('Deploy') {
       steps {
-        // Add your deployment steps here
-        // For example, to copy to a remote server using scp:
-        // sh 'scp -r build/* username@yourserver:/path/to/deployment/directory'
-        // Make sure to replace 'username', 'yourserver', and '/path/to/deployment/directory' with your actual data
-        // Replace '/usr/local/bin/pm2' with the full path to the PM2 executable on your system
-    sh '/usr/local/bin/pm2 start /usr/local/bin/serve --name "react-app" -- -s build -l 3000'
+        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+          // Ensure PM2 is installed
+          sh 'npm list -g pm2 || npm install -g pm2'
+          // Ensure 'serve' is installed
+          sh 'npm list -g serve || npm install -g serve'
+          // Start or restart the application
+          sh 'pm2 start serve --name "react-app" -s build -l 3000 --time || pm2 restart "react-app"'
+        }
       }
     }
   }
 
   post {
+    always {
+      // Clean up the workspace to not store the node_modules etc.
+      cleanWs(notFailBuild: true)
+    }
     success {
       // What to do if the pipeline succeeds
       echo 'Build and deployment succeeded!'
+      // Save the PM2 process list to resurrect processes on reboot
+      sh 'pm2 save'
     }
     failure {
       // What to do if the pipeline fails
