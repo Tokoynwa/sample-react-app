@@ -4,7 +4,7 @@ pipeline {
   environment {
     CI = 'true'
     PM2_HOME = '/var/lib/jenkins/.pm2' // Set PM2_HOME as an environment variable
-    SERVE_PATH = '/var/www/html/react-app' // Set the path to where you want to serve the app
+    SERVE_PATH = '/var/lib/jenkins/workspace/newreactpipeline' // Set the path to where you want to serve the app
   }
 
   stages {
