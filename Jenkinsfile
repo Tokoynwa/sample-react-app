@@ -42,10 +42,6 @@ pipeline {
   }
 
   post {
-    always {
-      // Clean up the workspace after the pipeline runs
-      cleanWs()
-    }
     success {
       // What to do if the pipeline succeeds
       echo 'Build and deployment succeeded!'
