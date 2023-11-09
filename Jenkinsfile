@@ -3,6 +3,8 @@ pipeline {
 
   environment {
     CI = 'true'
+    PM2_HOME = '/var/lib/jenkins/.pm2' // Set PM2_HOME as an environment variable
+    SERVE_PATH = '/var/www/html/react-app' // Set the path to where you want to serve the app
   }
 
   stages {
@@ -39,12 +41,14 @@ pipeline {
     stage('Deploy') {
       steps {
         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+          sh 'mkdir -p ${SERVE_PATH}'
+          sh 'cp -R build/* ${SERVE_PATH}'
           // Ensure PM2 is installed
           sh 'npm list -g pm2 || npm install -g pm2'
           // Ensure 'serve' is installed
           sh 'npm list -g serve || npm install -g serve'
-          // Start or restart the application with the absolute path to the build directory
-          sh 'pm2 start /usr/local/bin/serve --name "react-app" -- -s /var/lib/jenkins/workspace/newreactpipeline/build -l 3000'
+          // Start or restart the application
+          sh 'pm2 start /usr/local/bin/serve --name "react-app" -- -s ${SERVE_PATH} -l 3000'
           // Save the PM2 process list to resurrect processes on reboot
           sh 'pm2 save'
         }
@@ -53,10 +57,6 @@ pipeline {
   }
 
   post {
-    always {
-      // Clean up the workspace to not store the node_modules etc.
-      cleanWs(notFailBuild: true)
-    }
     success {
       // What to do if the pipeline succeeds
       echo 'Build and deployment succeeded!'
@@ -64,6 +64,4 @@ pipeline {
     failure {
       // What to do if the pipeline fails
       echo 'Build or deployment failed.'
-    }
-  }
-}
+    
