@@ -1,6 +1,6 @@
 deploy:
   docker:
-    - image: cimg/node:14.17
+    - image: cimg/node:14.17  # Node.js Docker image
   steps:
     - checkout
     - run:
@@ -8,10 +8,18 @@ deploy:
         command: npm install
     - run:
         name: Build React App
-        command: npm run build  # Assuming you have a script to build your React app
+        command: npm run build  # Builds the production version of the app
     - run:
-        name: Deploy Application
+        name: Set up Google Cloud SDK (If deploying to GKE)
         command: |
-          # Your deployment commands here
-          # This could involve pushing the build to a server, 
-          # or updating a Kubernetes deployment, etc.
+          echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+          gcloud config set project $GOOGLE_PROJECT_ID
+          gcloud config set compute/zone $GOOGLE_COMPUTE_ZONE
+    - run:
+        name: Install kubectl (If deploying to Kubernetes)
+        command: gcloud components install kubectl
+    - run:
+        name: Deploy Application to Kubernetes
+        command: |
+          kubectl apply -f path/to/your/kubernetes/deployment.yaml
+          # Add additional kubectl commands as needed
