@@ -1,25 +1,23 @@
-deploy:
-  docker:
-    - image: cimg/node:14.17  # Node.js Docker image
-  steps:
-    - checkout
-    - run:
-        name: Install Dependencies
-        command: npm install
-    - run:
-        name: Build React App
-        command: npm run build  # Builds the production version of the app
-    - run:
-        name: Set up Google Cloud SDK (If deploying to GKE)
-        command: |
-          echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
-          gcloud config set project $GOOGLE_PROJECT_ID
-          gcloud config set compute/zone $GOOGLE_COMPUTE_ZONE
-    - run:
-        name: Install kubectl (If deploying to Kubernetes)
-        command: gcloud components install kubectl
-    - run:
-        name: Deploy Application to Kubernetes
-        command: |
-          kubectl apply -f path/to/your/kubernetes/deployment.yaml
-          # Add additional kubectl commands as needed
+version: 2.1
+
+jobs:
+  build-and-test:
+    docker:
+      - image: cimg/node:14.17  # Node.js Docker image
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: npm install
+      - run:
+          name: Run Tests
+          command: npm test  # Ensure this generates XML test results
+      - store_test_results:  # Store test results
+          path: ./test-results  # Replace with your test results directory
+
+workflows:
+  version: 2
+  build-test-and-deploy:
+    jobs:
+      - build-and-test
+      # Include other jobs as needed
