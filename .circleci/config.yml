@@ -1,41 +1,17 @@
-version: 2.1
-
-jobs:
-  build-and-test:
-    docker:
-      - image: cimg/node:14.17  # Use a Node.js image
-    steps:
-      - checkout
-      - run:
-          name: Install Dependencies
-          command: npm install
-      - run:
-          name: Run Tests
-          command: npm test  # Modify this if you have a different test command
-
-  deploy:
-    docker:
-      - image: cimg/node:14.17
-    steps:
-      - checkout
-      - run:
-          name: Build React App
-          command: npm run build  # Assuming you have a script to build your React app
-      - run:
-          name: Deploy Application
-          command: |
-            # Your deployment commands here
-            # This could involve pushing the build to a server, 
-            # or updating a Kubernetes deployment, etc.
-
-workflows:
-  version: 2
-  build-test-and-deploy:
-    jobs:
-      - build-and-test
-      - deploy:
-          requires:
-            - build-and-test
-          filters:
-            branches:
-              only: main  # Only deploy from the master branch
+deploy:
+  docker:
+    - image: cimg/node:14.17
+  steps:
+    - checkout
+    - run:
+        name: Install Dependencies
+        command: npm install
+    - run:
+        name: Build React App
+        command: npm run build  # Assuming you have a script to build your React app
+    - run:
+        name: Deploy Application
+        command: |
+          # Your deployment commands here
+          # This could involve pushing the build to a server, 
+          # or updating a Kubernetes deployment, etc.
