@@ -1,10 +1,10 @@
 pipeline {
     agent any
 
-    environment {
+   // environment {
         // Define environment variables if needed
         // NODE_VERSION = '12.x' // Uncomment and set your Node.js version
-    }
+    // }
 
     stages {
         stage('Checkout') {
