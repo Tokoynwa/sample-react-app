@@ -1,9 +1,9 @@
 pipeline {
     agent any
 
-   // environment {
-        // Define environment variables if needed
-        // NODE_VERSION = '12.x' // Uncomment and set your Node.js version
+    // Uncomment and use this if you have environment variables
+    // environment {
+    //     NODE_VERSION = '14.17.0'
     // }
 
     stages {
@@ -11,15 +11,15 @@ pipeline {
             steps {
                 checkout scm: [
                     $class: 'GitSCM', 
-                    branches: [[name: '*/main']],  // Explicitly specifying the 'main' branch
+                    branches: [[name: '*/main']],
                     userRemoteConfigs: [[url: 'https://github.com/Tokoynwa/sample-react-app.git']]
                 ]
             }
         }
         stage('Install Dependencies') {
             steps {
-                // Use a specific Node.js version if necessary
-                // sh 'nvm use $NODE_VERSION' // Uncomment if using nvm and a specific Node.js version
+                // Uncomment and use this if you're using a specific Node.js version with nvm
+                // sh 'nvm use $NODE_VERSION'
                 sh 'npm install'
             }
         }
@@ -30,19 +30,16 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                // Ensure Jenkins user has the necessary permissions to execute this command
                 sh 'cp -R build/* /var/www/html/'
             }
         }
     }
     post {
         always {
-            // Steps to perform after the pipeline ends, regardless of result
-            // e.g., cleanup, sending notifications
+            echo 'This will always run'
         }
         failure {
-            // Steps to perform if the pipeline fails
-            // e.g., send a failure notification
+            echo 'This will run only if the pipeline fails'
         }
     }
 }
