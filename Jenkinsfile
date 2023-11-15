@@ -2,22 +2,29 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                // Add build steps here
-                echo 'Building..'
+                // Check out source code from SCM
+                git 'https://github.com/Tokoynwa/sample-react-app/tree/main'
             }
         }
-        stage('Test') {
+        stage('Install Dependencies') {
             steps {
-                // Add test steps here
-                echo 'Testing..'
+                // Install npm dependencies
+                sh 'npm install'
+            }
+        }
+        stage('Build') {
+            steps {
+                // Build the React app
+                sh 'npm run build'
             }
         }
         stage('Deploy') {
             steps {
-                // Add deployment steps here
-                echo 'Deploying..'
+                // Deploy to the web server
+                // Assuming the web server serves files from /var/www/html
+                sh 'cp -R build/* /var/www/html/'
             }
         }
     }
