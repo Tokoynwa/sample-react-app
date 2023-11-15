@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Check out source code from SCM
-                git 'https://github.com/Tokoynwa/sample-react-app/tree/main'
+                git 'git@github.com:Tokoynwa/sample-react-app.git'
             }
         }
         stage('Install Dependencies') {
